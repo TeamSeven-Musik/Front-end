@@ -1,14 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IoWarning } from "react-icons/io5";
-import classNames from "classnames/bind";
+
 
 function ErrorPage({ errorMessage }) {
   const navigate = useNavigate();
-  const cx = classNames.bind(styles);
 
   return (
-    <div className={styles.notFound}>
+    <div>
       {errorMessage ? (          
         <div className={cx("notification-container")}>
             <span className={cx("notification-icon")}>

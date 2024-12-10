@@ -50,6 +50,17 @@ export const PlayerContext = createContext();
         }
     }
 
+    const shuffle = async () =>{
+        const randomIndex = Math.floor(Math.random() * songsData.length);
+        await setTrack(songsData[randomIndex]);
+        await play();
+    }
+
+    const replay = async () =>{
+        audioRef.current.currentTime = 0;
+        await play();
+    }
+
     const seekSong = async (e) =>{
         console.log(e);
     }
@@ -73,7 +84,7 @@ export const PlayerContext = createContext();
     },[audioRef])
 
     const contextValue = {
-        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong
+        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay
     }
 
     return(

@@ -3,7 +3,7 @@ import { assets, songsData } from '../../assets/assets'
 import { PlayerContext } from '../../pages/context/PlayerContext'
 import { useContext } from 'react'
 const Player = () => {
-    const {track,seekBg,seekBar,playStatus,play,pause,time,previous,next,seekSong} = useContext(PlayerContext);
+    const {track,seekBg,seekBar,playStatus,play,pause,time,previous,next,seekSong,shuffle,replay} = useContext(PlayerContext);
   return (
     <div className='h-[10%] bg-black flex justify-between items-center text-white px-4'>
 
@@ -17,11 +17,11 @@ const Player = () => {
 
         <div className='flex flex-col items-center gap-1 m-auto'>
             <div className='flex gap-4'>
-                <img className='w-4 cursor-pointer' src={assets.shuffle_icon} alt=''/>
-                <img ref={previous} className='w-4 cursor-pointer' src={assets.prev_icon} alt=''/>
+                <img onClick={shuffle} className='w-4 cursor-pointer' src={assets.shuffle_icon} alt=''/>
+                <img onClick={previous} className='w-4 cursor-pointer' src={assets.prev_icon} alt=''/>
                 {playStatus == true ? (<img onClick={pause} className='w-4 cursor-pointer' src={assets.pause_icon} alt=''/>) : (<img onClick={play} className='w-4 cursor-pointer' src={assets.play_icon} alt=''/>)}
-                <img ref={next} className='w-4 cursor-pointer' src={assets.next_icon} alt=''/>
-                <img className='w-4 cursor-pointer' src={assets.loop_icon} alt=''/>
+                <img onClick={next} className='w-4 cursor-pointer' src={assets.next_icon} alt=''/>
+                <img onClick={replay} className='w-4 cursor-pointer' src={assets.loop_icon} alt=''/>
             </div>
             <div className='flex items-center gap-5'>
                 <p>{time.currentTime.minute}:{time.currentTime.second}</p>
