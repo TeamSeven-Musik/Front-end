@@ -7,10 +7,12 @@ import { albumsData, assets } from "../assets/assets";
 import { songsData } from "../assets/assets";
 import { useLocation } from "react-router-dom";
 import {PlayerContext} from "./context/PlayerContext";
+import Queue from "../layouts/components/Queue";
+
 const Home = () => {
   const location = useLocation();
   const albumOrSong = location.state || {};
-  const {audioRef,track,playwithId} = useContext(PlayerContext);
+  const {audioRef,track,playwithId,showQueue} = useContext(PlayerContext);
 
   return (
     <div className="h-screen bg-black">
@@ -108,6 +110,7 @@ const Home = () => {
             </>
           )}
         </div>
+        {showQueue && <Queue/>}
       </div>
       <Player />
       <audio ref={audioRef} src={track.file} preload="auto"> </audio>

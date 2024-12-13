@@ -8,8 +8,12 @@ export const PlayerContext = createContext();
     const seekBg = useRef();
     const seekBar = useRef();
 
+    const seekVl = useRef();
+    const seekVolume = useRef();
+
     const [track,setTrack] = useState(songsData[0]);
     const [playStatus,setPlayStatus] = useState(false);
+    const [showQueue,setShowQueue] = useState(false);
 
     const [time,setTime] = useState({
         currentTime:{
@@ -62,7 +66,32 @@ export const PlayerContext = createContext();
     }
 
     const seekSong = async (e) =>{
-        console.log(e);
+        audioRef.current.currentTime = ((e.nativeEvent.offsetX / seekBg.current.offsetWidth)*audioRef.current.duration)
+    }
+
+    const seekFixVolume = async (e) => {
+        // Xác định vị trí click và tính tỷ lệ
+        const rect = seekVl.current.getBoundingClientRect(); // Lấy tọa độ thanh volume.
+        const offsetX = e.clientX - rect.left; // Tính vị trí click.
+        const volumeRatio = offsetX / seekVl.current.offsetWidth; 
+    
+        // Giới hạn giá trị volumeRatio trong khoảng [0, 1]
+        const newVolume = Math.max(0, Math.min(1, volumeRatio)); // Giới hạn từ 0 đến 1.
+    
+        // Cập nhật âm lượng của audio và style của seekVolume
+        audioRef.current.volume = newVolume;  // Áp dụng âm lượng cho audio.
+        seekVolume.current.style.width = `${newVolume * 100}%`;  // Cập nhật thanh volume.
+    
+        // Lưu giá trị âm lượng vào state
+        setVolume(newVolume);
+    };
+
+    const queueCLick = () => {
+        if(showQueue){
+            setShowQueue(false)
+        }else{
+            setShowQueue(true)
+        }
     }
     
     useEffect(()=>{
@@ -84,7 +113,7 @@ export const PlayerContext = createContext();
     },[audioRef])
 
     const contextValue = {
-        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay
+        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay,seekVl,seekVolume,seekFixVolume,queueCLick,showQueue
     }
 
     return(
