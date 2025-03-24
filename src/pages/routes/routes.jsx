@@ -4,7 +4,7 @@ import Register from "../Register";
 const publicRoutes = [
     { path: '/', component: Home,layout: null},
     { path: '/albumsongdisplay/:id', component: Home, layout: null },
-    { path: '/register', component: Register, layout: null},
+    { path: '/register', component: Register, layout: null}
 ];
 
 const privateRoutes = [

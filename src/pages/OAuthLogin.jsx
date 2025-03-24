@@ -6,7 +6,7 @@ const OAuthLogin = ({ onLoginSuccess, onLoginFailure }) => {
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: "YOUR_FACEBOOK_APP_ID", // Thay bằng Facebook App ID
+        appId: "1667382397518151", // Thay bằng Facebook App ID
         cookie: true,
         xfbml: true,
         version: "v16.0",
