@@ -2,22 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import OAuthLogin from "./OAuthLogin";
 
-const Register = () => {
-  const [name, setName] = useState("");
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
 
   const validateForm = () => {
     const newErrors = {};
-
-    // Validate name
-    if (!name.trim()) {
-      newErrors.name = "Name is required.";
-    } else if (name.length < 3) {
-      newErrors.name = "Name must be at least 3 characters long.";
-    }
 
     // Validate email
     if (!email.trim()) {
@@ -29,19 +22,45 @@ const Register = () => {
     // Validate password
     if (!password.trim()) {
       newErrors.password = "Password is required.";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long.";
+    } else if (password.length < 4) {
+      newErrors.password = "Password must be at least 4 characters long.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // True if no errors
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted successfully:", { name, email, password });
-      // Handle API call or other logic here
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch("https://54.66.143.213:5000/api/Login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login successful:", data);
+        // Lưu token hoặc thông tin người dùng vào localStorage/sessionStorage
+        localStorage.setItem("token", data.token);
+        // Điều hướng đến trang Home
+        navigate("/"); // Navigate to Home
+      } else {
+        // Hiển thị lỗi từ API
+        setErrors({ api: data.message || "Login failed. Please try again." });
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrors({ api: "An unexpected error occurred. Please try again later." });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,19 +76,9 @@ const Register = () => {
   return (
     <div className="h-screen bg-black text-white flex items-center justify-center">
       <div className="w-full max-w-md bg-[#121212] p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold mb-4 text-center">Register</h1>
+        <h1 className="text-3xl font-bold mb-4 text-center">Login</h1>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Name</label>
-            <input
-              type="text"
-              className="w-full mt-1 px-4 py-2 bg-[#181818] border border-gray-700 rounded-lg text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-          </div>
+          {errors.api && <p className="text-red-500 text-sm">{errors.api}</p>}
           <div>
             <label className="block text-sm font-medium text-gray-300">Email</label>
             <input
@@ -97,8 +106,9 @@ const Register = () => {
           <button
             type="submit"
             className="w-full py-2 bg-green-500 rounded-lg text-black font-bold hover:bg-green-600 transition duration-300"
+            disabled={loading}
           >
-            Register
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -111,12 +121,12 @@ const Register = () => {
         </div>
 
         <p className="text-sm text-gray-400 mt-4 text-center">
-          Already have an account?{" "}
+          Don't have an account?{" "}
           <span
             className="text-green-500 hover:underline cursor-pointer"
-            onClick={() => navigate("/login")} // Use navigate instead of href
+            onClick={() => navigate("/register")} // Use navigate instead of href
           >
-            Login here
+            Register here
           </span>
         </p>
       </div>
@@ -124,4 +134,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
