@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import OAuthLogin from "./OAuthLogin";
 
 const Register = () => {
@@ -6,6 +7,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate(); // Initialize navigate
 
   const validateForm = () => {
     const newErrors = {};
@@ -15,7 +17,7 @@ const Register = () => {
       newErrors.name = "Name is required.";
     } else if (name.length < 3) {
       newErrors.name = "Name must be at least 3 characters long.";
-    } 
+    }
 
     // Validate email
     if (!email.trim()) {
@@ -110,9 +112,12 @@ const Register = () => {
 
         <p className="text-sm text-gray-400 mt-4 text-center">
           Already have an account?{" "}
-          <a href="/login" className="text-green-500 hover:underline">
+          <span
+            className="text-green-500 hover:underline cursor-pointer"
+            onClick={() => navigate("/login")} // Use navigate instead of href
+          >
             Login here
-          </a>
+          </span>
         </p>
       </div>
     </div>

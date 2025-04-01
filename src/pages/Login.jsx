@@ -122,9 +122,12 @@ const Login = () => {
 
         <p className="text-sm text-gray-400 mt-4 text-center">
           Don't have an account?{" "}
-          <a href="/register" className="text-green-500 hover:underline">
+          <span
+            className="text-green-500 hover:underline cursor-pointer"
+            onClick={() => navigate("/register")} // Use navigate instead of href
+          >
             Register here
-          </a>
+          </span>
         </p>
       </div>
     </div>
