@@ -42,6 +42,18 @@ import img16 from './img16.jpg'
 import song1 from  './song1.mp3'
 import song2 from  './song2.mp3'
 import song3 from  './song3.mp3'
+import library_icon from './library.png'
+import discover_icon from './discover.png'
+import zingchart_icon from './zingchart.png'
+import listen_recent from './listen_recent.png'
+import favorite_icon from './favorite.png'
+import playlist_icon from './playlist.png'
+import podcast_icon from './podcast.png'
+import album_icon from './album.png'
+import uploaded_icon from './uploaded.png'
+import bxh_new_track_icon from './bxh_new_track.png'
+import category_topic_icon from './category_topic.png'
+import volume_mute_icon from './volume_mute.png'
 
 export const assets = {
     close_icon,
@@ -68,7 +80,19 @@ export const assets = {
     arrow_left,
     arrow_right,
     spotify_logo,
-    clock_icon
+    clock_icon,
+    library_icon,
+    discover_icon,
+    zingchart_icon,
+    listen_recent,
+    favorite_icon,
+    playlist_icon,
+    podcast_icon,
+    album_icon,
+    uploaded_icon,
+    bxh_new_track_icon,
+    category_topic_icon,
+    volume_mute_icon
 }
 
 export const albumsData = [

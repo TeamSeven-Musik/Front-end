@@ -14,6 +14,7 @@ export const PlayerContext = createContext();
     const [track,setTrack] = useState(songsData[0]);
     const [playStatus,setPlayStatus] = useState(false);
     const [showQueue,setShowQueue] = useState(false);
+    const [isMuted,setIsMuted] = useState(false);
 
     const [time,setTime] = useState({
         currentTime:{
@@ -74,16 +75,14 @@ export const PlayerContext = createContext();
         const rect = seekVl.current.getBoundingClientRect(); // Lấy tọa độ thanh volume.
         const offsetX = e.clientX - rect.left; // Tính vị trí click.
         const volumeRatio = offsetX / seekVl.current.offsetWidth; 
-    
+        
         // Giới hạn giá trị volumeRatio trong khoảng [0, 1]
         const newVolume = Math.max(0, Math.min(1, volumeRatio)); // Giới hạn từ 0 đến 1.
-    
+        
         // Cập nhật âm lượng của audio và style của seekVolume
         audioRef.current.volume = newVolume;  // Áp dụng âm lượng cho audio.
         seekVolume.current.style.width = `${newVolume * 100}%`;  // Cập nhật thanh volume.
-    
-        // Lưu giá trị âm lượng vào state
-        setVolume(newVolume);
+        
     };
 
     const queueCLick = () => {
@@ -93,7 +92,14 @@ export const PlayerContext = createContext();
             setShowQueue(true)
         }
     }
-    
+    const handleToggleVolume = () =>{
+        if(isMuted){
+            setIsMuted(false)
+        }else{
+            setIsMuted(true)
+        }
+    }
+
     useEffect(()=>{
         setTimeout(()=>{
             audioRef.current.ontimeupdate = () =>{
@@ -112,8 +118,13 @@ export const PlayerContext = createContext();
         },1000)
     },[audioRef])
 
+    useEffect(()=>{
+        audioRef.current.volume = 0.5;
+        seekVolume.current.style.width = `${ 0.5 * 100}%`;
+    },[])
+
     const contextValue = {
-        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay,seekVl,seekVolume,seekFixVolume,queueCLick,showQueue
+        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay,seekVl,seekVolume,seekFixVolume,queueCLick,showQueue,handleToggleVolume,isMuted
     }
 
     return(
