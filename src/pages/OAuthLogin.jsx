@@ -2,40 +2,6 @@ import React, { useEffect } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const OAuthLogin = ({ onLoginSuccess, onLoginFailure }) => {
-  // Facebook SDK Initialization
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: "1667382397518151", // Thay bằng Facebook App ID
-        cookie: true,
-        xfbml: true,
-        version: "v16.0",
-      });
-    };
-  }, []);
-
-  // Handle Facebook Login
-  const handleFacebookLogin = () => {
-    window.FB.login(
-      (response) => {
-        if (response.status === "connected") {
-          const accessToken = response.authResponse.accessToken;
-          // Get user details from Facebook
-          window.FB.api("/me", { fields: "name,email,picture" }, (user) => {
-            onLoginSuccess({
-              provider: "facebook",
-              ...user,
-              accessToken,
-            });
-          });
-        } else {
-          onLoginFailure("Facebook login failed!");
-        }
-      },
-      { scope: "public_profile,email" }
-    );
-  };
-
   return (
     <div className="space-y-4">
       {/* Google Login */}
@@ -52,14 +18,6 @@ const OAuthLogin = ({ onLoginSuccess, onLoginFailure }) => {
           }}
         />
       </GoogleOAuthProvider>
-
-      {/* Facebook Login */}
-      <button
-        onClick={handleFacebookLogin}
-        className="w-full py-2 bg-blue-500 rounded-lg text-white font-bold hover:bg-blue-600 transition duration-300 text-center"
-      >
-        Register with Facebook
-      </button>
     </div>
   );
 };
