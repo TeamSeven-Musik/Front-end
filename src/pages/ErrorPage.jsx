@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IoWarning } from "react-icons/io5";
-
+import { Button } from "react-bootstrap";
 
 function ErrorPage({ errorMessage }) {
   const navigate = useNavigate();

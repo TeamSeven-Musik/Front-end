@@ -1,10 +1,10 @@
-async function uploadImgBB(files) {
-    const apiKey = "a393ae4d99828767ecd403ef4539e170";
-    
+const apiKey = "7cb30a1b7d0c405c27909f2f5fa515de";
+export async function uploadImgBBMultipleFile(files) {
     // Chuyển đổi FileList hoặc bất kỳ đối tượng tương tự mảng nào thành mảng thực sự
     const filesArray = Array.isArray(files) ? files : Array.from(files);
     
     const uploadPromises = filesArray.map((file) => {
+      console.log("File in imgbb.jsx",file);
       const formData = new FormData();
       formData.append("image", file);
   
@@ -22,6 +22,21 @@ async function uploadImgBB(files) {
   
     return Promise.all(uploadPromises);
   }
+
+  export async function uploadImgBBOneFile(file){
+    const formData = new FormData();
+    formData.append("image", file); // Truyền file trực tiếp
   
-  export default uploadImgBB;
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: formData,
+    });
+  
+    if (!response.ok) {
+      throw new Error("Failed to upload image");
+    }
+  
+    const data = await response.json();
+    return data.data.url; // Trả về link ảnh dưới dạng chuỗi string
+  };
   

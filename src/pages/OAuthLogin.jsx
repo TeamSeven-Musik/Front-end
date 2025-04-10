@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const OAuthLogin = ({ onLoginSuccess, onLoginFailure }) => {
-
   return (
     <div className="space-y-4">
       {/* Google Login */}
