@@ -2,15 +2,17 @@ import axios from "axios";
 
 // Instance cho API
 const api = axios.create({
-  baseURL: "http://localhost:8084/api",
+  baseURL: "https://54.66.143.213:5000/api",
   timeout: 5000,
 });
 
 // Instance cho các yêu cầu không sử dụng /api
 const apiWithoutPrefix = axios.create({
-  baseURL: "http://localhost:8084",
+  baseURL: "https://54.66.143.213:5000",
   timeout: 5000,
 });
+
+
 
 // Thêm interceptor cho instance API nếu cần
 const handleBefore = (config) => {
@@ -32,4 +34,5 @@ apiWithoutPrefix.interceptors.request.use(handleBefore, (error) => {
 
 // Export cả hai instance
 export default api;
-export {apiWithoutPrefix };
+export {apiWithoutPrefix};
+

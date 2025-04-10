@@ -5,7 +5,14 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
   const [showSearchInput, setShowSearchInput] = useState(false);
-  
+
+    // Hàm xử lý sự kiện khi click vào "Upload Track"
+    const handleUploadTrackClick = () => {
+      console.log("Upload Track clicked!");
+      // Điều hướng đến trang upload (nếu cần)
+      navigate("/uploadTrack");
+    };
+
   return (
     <div className="w-[25%] h-full p-2 flex-col gap-2 text-white hidden lg:flex">
       <div className="bg-[#121212] h-[15%] rounded flex flex-col justify-around">
@@ -119,7 +126,7 @@ const Sidebar = () => {
             <h1>#MusikChart</h1>
           </div>
             </div>
-            <div className="flex items-center justify-center hover:bg-[#242424] transition-colors duration-300">
+            <div className="flex items-center justify-center hover:bg-[#242424] transition-colors duration-300" onClick={handleUploadTrackClick}>
             <div className="flex items-center gap-3">
             <img className="w-8" src={assets.uploaded_icon} alt="" />
             <h1>Upload Track</h1>
