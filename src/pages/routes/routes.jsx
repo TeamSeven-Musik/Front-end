@@ -9,7 +9,7 @@ const publicRoutes = [
     { path: '/albumsongdisplay/:id', component: Home, layout: null },
     { path: '/register', component: Register, layout: null},
     { path: '/login', component: Login, layout: null},
-    { path: 'profile', component: Profile, layout: null},
+    { path: '/profile', component: Profile, layout: null},
     { path: '/uploadTrack', component: UploadTrack, layout: null},
 ];
 
