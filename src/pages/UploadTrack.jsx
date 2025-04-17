@@ -76,7 +76,8 @@ const UploadTrack = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("http://54.206.93.117:8000/upload", {
+        // Gửi request đến API
+        const response = await fetch("https://musik.mp3.converter.ticketresell-swp.click/upload", {
           method: "POST",
           body: formData,
         });
@@ -85,9 +86,15 @@ const UploadTrack = () => {
           throw new Error("Failed to upload file");
         }
 
+        // Lấy JSON trả về từ API
         const result = await response.json();
-        setAudioFile(result.url);
+
+        // Gán giá trị từ JSON trả về
+        setAudioFile(result.url); // Gán giá trị "url" vào audioFile
+        setDuration(result.duration); // Gán giá trị "duration" vào duration
+
         console.log("Audio uploaded successfully:", result.url);
+        console.log("Duration:", result.duration);
       } catch (error) {
         console.error("Error uploading file:", error);
         alert("Failed to upload audio. Please try again.");
@@ -219,7 +226,8 @@ const UploadTrack = () => {
                 type="text"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                placeholder="Enter duration (e.g., 3:45)"
+                placeholder="Please upload mp3"
+                readOnly
                 className="w-full p-2 rounded bg-[#121212] text-white border border-gray-600 focus:outline-none focus:border-white"
               />
             </div>
@@ -246,30 +254,33 @@ const UploadTrack = () => {
                 className="w-full p-2 rounded bg-[#121212] text-white border border-gray-600 focus:outline-none focus:border-white"
               />
               {audioFile && (
-                <p className="mt-2 text-sm text-gray-400">Selected MP3: {audioFile.name}</p>
+                <p className="mt-2 text-sm text-gray-400">Selected MP3: {audioFile}</p>
               )}
             </div>
 
             {/* Dropdown chọn nhiều tên nghệ sĩ */}
             <div>
-              <label className="block mb-2 font-semibold">Artist</label>
+              <label className="block mb-2 font-semibold">Artists</label>
               <select
+                value={artists.length === 0 ? "" : undefined}
                 onChange={(e) => {
-                  const selectedOptions = Array.from(e.target.selectedOptions, (option) => ({
-                    artistId: option.value,
-                    artistName: option.text,
-                  }));
+                  const selectedArtist = {
+                    artistId: e.target.value,
+                    artistName: e.target.options[e.target.selectedIndex].text,
+                  };
 
-                  // Thêm các artist mới vào danh sách đã chọn
                   setArtists((prevArtists) => {
-                    const newArtists = selectedOptions.filter(
-                      (newArtist) => !prevArtists.some((artist) => artist.artistId === newArtist.artistId)
-                    );
-                    return [...prevArtists, ...newArtists];
+                    if (!prevArtists.some((artist) => artist.artistId === selectedArtist.artistId)) {
+                      return [...prevArtists, selectedArtist];
+                    }
+                    return prevArtists;
                   });
                 }}
                 className="w-full p-2 rounded bg-[#121212] text-white border border-gray-600 focus:outline-none focus:border-white"
               >
+                <option value="" disabled hidden>
+                  Choose artist
+                </option>
                 {availableArtists.map((artist) => (
                   <option key={artist.artistId} value={artist.artistId}>
                     {artist.artistName}
@@ -277,12 +288,22 @@ const UploadTrack = () => {
                 ))}
               </select>
               <div className="mt-2">
-                {artists.map((artist, index) => (
+                {artists.map((artist) => (
                   <span
-                    key={index}
+                    key={artist.artistId}
                     className="inline-block bg-blue-500 text-white px-2 py-1 rounded-full text-sm mr-2 mb-2"
                   >
                     {artist.artistName}
+                    <button
+                      onClick={() =>
+                        setArtists((prevArtists) =>
+                          prevArtists.filter((a) => a.artistId !== artist.artistId)
+                        )
+                      }
+                      className="ml-2 text-white hover:text-red-500"
+                    >
+                      &times;
+                    </button>
                   </span>
                 ))}
               </div>
@@ -292,22 +313,25 @@ const UploadTrack = () => {
             <div>
               <label className="block mb-2 font-semibold">Genres</label>
               <select
+                value={genres.length === 0 ? "" : undefined}
                 onChange={(e) => {
-                  const selectedOptions = Array.from(e.target.selectedOptions, (option) => ({
-                    genreId: option.value,
-                    genreName: option.text,
-                  }));
+                  const selectedGenre = {
+                    genreId: e.target.value,
+                    genreName: e.target.options[e.target.selectedIndex].text,
+                  };
 
-                  // Thêm các genre mới vào danh sách đã chọn
                   setGenres((prevGenres) => {
-                    const newGenres = selectedOptions.filter(
-                      (newGenre) => !prevGenres.some((genre) => genre.genreId === newGenre.genreId)
-                    );
-                    return [...prevGenres, ...newGenres];
+                    if (!prevGenres.some((genre) => genre.genreId === selectedGenre.genreId)) {
+                      return [...prevGenres, selectedGenre];
+                    }
+                    return prevGenres;
                   });
                 }}
                 className="w-full p-2 rounded bg-[#121212] text-white border border-gray-600 focus:outline-none focus:border-white"
               >
+                <option value="" disabled hidden>
+                  Choose genres
+                </option>
                 {availableGenres.map((genre) => (
                   <option key={genre.genreId} value={genre.genreId}>
                     {genre.genreName}
@@ -315,12 +339,22 @@ const UploadTrack = () => {
                 ))}
               </select>
               <div className="mt-2">
-                {genres.map((genre, index) => (
+                {genres.map((genre) => (
                   <span
-                    key={index}
+                    key={genre.genreId}
                     className="inline-block bg-blue-500 text-white px-2 py-1 rounded-full text-sm mr-2 mb-2"
                   >
                     {genre.genreName}
+                    <button
+                      onClick={() =>
+                        setGenres((prevGenres) =>
+                          prevGenres.filter((g) => g.genreId !== genre.genreId)
+                        )
+                      }
+                      className="ml-2 text-white hover:text-red-500"
+                    >
+                      &times;
+                    </button>
                   </span>
                 ))}
               </div>

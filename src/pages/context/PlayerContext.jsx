@@ -1,6 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
-import { songsData } from "../../assets/assets";
-
+//import { songsData } from "../../assets/assets";
+import api from "../../config/axios";
 export const PlayerContext = createContext();
 
  const PlayerContextProvider = (props) =>{
@@ -11,10 +11,53 @@ export const PlayerContext = createContext();
     const seekVl = useRef();
     const seekVolume = useRef();
 
-    const [track,setTrack] = useState(songsData[0]);
+    const [songsData,setSongsData] = useState([]);
+    const [albumsData,setAlbumsData] = useState([]);
+    const [track, setTrack] = useState({
+      trackId: null,
+      trackName: "",
+      trackBlobsLink: "",
+      img: "",
+      artists: [],
+    });
     const [playStatus,setPlayStatus] = useState(false);
     const [showQueue,setShowQueue] = useState(false);
     const [isMuted,setIsMuted] = useState(false);
+    
+
+    const fetchAllTrack = async () => {
+        try {
+        const response = await api.get("/track");
+        console.log("Tracks data:", response.data);
+        setSongsData(response.data);
+        } catch (error) {
+          console.error("Error fetching tracks:", error);
+          throw error;
+        }
+      }
+
+      const fetchAllAlbumsData = async () => {
+        try {
+        const response = await api.get("/albums");
+        console.log("Albums data:", response.data);
+        setAlbumsData(response.data);
+        } catch (error) {
+          console.error("Error fetching tracks:", error);
+          throw error;
+        }
+      }
+
+      useEffect(() => {
+        fetchAllTrack(); 
+        fetchAllAlbumsData();   
+      }, []);
+
+      useEffect(() => {
+        if (songsData.length > 0) {
+          setTrack(songsData[0]); // Đặt track là bài hát đầu tiên
+        }
+      }, [songsData]);
+
 
     const [time,setTime] = useState({
         currentTime:{
@@ -36,21 +79,27 @@ export const PlayerContext = createContext();
         setPlayStatus(false);
     }
 
-    const playwithId = async (id) =>{
-        await setTrack(songsData[id]);
-        await play();
-    }
+    const playwithId = async (id) => {
+      const selectedTrack = songsData.find((song) => song.trackId === id); // Tìm bài hát theo id
+      if (selectedTrack) {
+        await setTrack(selectedTrack); // Cập nhật track
+        await play(); // Phát bài hát
+      } else {
+        console.error(`Track with id ${id} not found`);
+        alert("Track not found!");
+      }
+    };
 
     const previous = async () =>{
-        if(track.id> 0){
-            await setTrack(songsData[track.id-1]);
+        if(track.trackId> 0){
+            await setTrack(songsData[track.trackId-1]);
             await play();
         }
     }
 
     const next = async () =>{
-        if(track.id < songsData.length-1){
-            await setTrack(songsData[track.id+1]);
+        if(track.trackId < songsData.length-1){
+            await setTrack(songsData[track.trackId+1]);
             await play();
         }
     }
@@ -124,7 +173,7 @@ export const PlayerContext = createContext();
     },[])
 
     const contextValue = {
-        audioRef,seekBg,seekBar,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay,seekVl,seekVolume,seekFixVolume,queueCLick,showQueue,handleToggleVolume,isMuted
+        audioRef,seekBg,seekBar,albumsData,songsData,track,setTrack,playStatus,setPlayStatus,time,setTime,play,pause,playwithId,previous,next,seekSong,shuffle,replay,seekVl,seekVolume,seekFixVolume,queueCLick,showQueue,handleToggleVolume,isMuted
     }
 
     return(

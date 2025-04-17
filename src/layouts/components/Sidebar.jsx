@@ -13,6 +13,13 @@ const Sidebar = () => {
       navigate("/uploadTrack");
     };
 
+        // Hàm xử lý sự kiện khi click vào "Create Album"
+        const handleCreateAlbumClick = () => {
+          console.log("Create Album clicked!");
+          // Điều hướng đến trang upload (nếu cần)
+          navigate("/createAlbum");
+        };
+
   return (
     <div className="w-[25%] h-full p-2 flex-col gap-2 text-white hidden lg:flex">
       <div className="bg-[#121212] h-[15%] rounded flex flex-col justify-around">
@@ -91,7 +98,7 @@ const Sidebar = () => {
             <img className="w-8" src={assets.album_icon} alt="" />
             <h1>Create some album</h1>
           </div>
-          <button className="px-4 py-1.5 bg-white text-[15px] text-black rounded-full mt-4">
+          <button className="px-4 py-1.5 bg-white text-[15px] text-black rounded-full mt-4" onClick={handleCreateAlbumClick}>
             Create your album
           </button>
         </div>

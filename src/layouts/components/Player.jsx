@@ -1,5 +1,5 @@
 import React from 'react'
-import { assets, songsData } from '../../assets/assets' 
+import { assets} from '../../assets/assets' 
 import { PlayerContext } from '../../pages/context/PlayerContext'
 import { useContext } from 'react'
 const Player = () => {
@@ -8,10 +8,10 @@ const Player = () => {
     <div className='h-[10%] bg-black flex justify-between items-center text-white px-4'>
 
         <div className='hidden lg:flex items-center gap-4'>
-            <img className='w-12' src={track.image} alt=''/>
+            <img className='w-12' src={track.img} alt=''/>
             <div>
-                <p>{track.name}</p>
-                <p>{track.desc.slice(0,12)}</p>
+                <p>{track.trackName}</p>
+                <p>Artists: {track.artists}</p>
             </div>
         </div>
 
