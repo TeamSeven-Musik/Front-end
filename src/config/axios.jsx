@@ -2,14 +2,14 @@ import axios from "axios";
 
 // Instance cho API
 const api = axios.create({
-  baseURL: "https://54.66.143.213:5000/api",
-  timeout: 60000,
+  baseURL: "https://musik.backend.ticketresell-swp.click/api",
+  timeout: 120000,
 });
 
 // Instance cho các yêu cầu không sử dụng /api
 const apiWithoutPrefix = axios.create({
-  baseURL: "https://54.66.143.213:5000",
-  timeout: 60000,
+  baseURL: "https://musik.backend.ticketresell-swp.click/",
+  timeout: 120000,
 });
 
 

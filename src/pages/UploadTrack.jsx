@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
-import {uploadImgBBOneFile}from "../config/imgBB";
-import api from "../config/axios"; 
+import { uploadImgBBOneFile } from "../config/imgBB";
+import api from "../config/axios";
 
 const UploadTrack = () => {
   const [currentForm, setCurrentForm] = useState("createTrack"); // State để quản lý màn hình hiện tại
@@ -28,7 +28,7 @@ const UploadTrack = () => {
       if (response && response.status === 200) {
         setAvailableGenres(response.data); // Giả sử API trả về danh sách thể loại
       }
-    }catch (error) {
+    } catch (error) {
       console.error("Error fetching genres:", error);
     }
   };
@@ -39,23 +39,23 @@ const UploadTrack = () => {
       if (response && response.status === 200) {
         setAvailableArtists(response.data); // Giả sử API trả về danh sách thể loại
       }
-    }catch (error) {
+    } catch (error) {
       console.error("Error fetching artist:", error);
     }
   };
 
-    // Sử dụng useEffect để gọi fetchGenres và fetchArtist khi component được render
-    useEffect(() => {
-      fetchGenres();
-      fetchArtist();
-    }, [currentForm]); // Chỉ chạy một lần khi component được render
+  // Sử dụng useEffect để gọi fetchGenres và fetchArtist khi component được render
+  useEffect(() => {
+    fetchGenres();
+    fetchArtist();
+  }, [currentForm]); // Chỉ chạy một lần khi component được render
 
   const handleImageUpload = async (event, setImageState) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
       try {
         // Gọi hàm uploadImgBB để upload ảnh lên imgBB
-        console.log("File",file);
+        console.log("File", file);
         const imageUrl = await uploadImgBBOneFile(file);
         setImageState(imageUrl); // Lưu link ảnh vào state tương ứng
         console.log("Image uploaded successfully:", imageUrl);
@@ -71,38 +71,57 @@ const UploadTrack = () => {
 
   const handleAudioUpload = async (event) => {
     const file = event.target.files[0];
+    console.log("File", file);
     if (file && file.type === "audio/mpeg") {
       try {
         const formData = new FormData();
         formData.append("file", file);
 
-        // Gửi request đến API
-        const response = await fetch("https://musik.mp3.converter.ticketresell-swp.click/upload", {
+        const response = await fetch("https://musik.backend.ticketresell-swp.click/flask/upload", {
           method: "POST",
           body: formData,
         });
 
         if (!response.ok) {
-          throw new Error("Failed to upload file");
+          const errorMessage = await response.text(); // Lấy nội dung lỗi từ server
+          console.error("Error response from server:", errorMessage);
+          throw new Error(`Failed to upload file: ${response.statusText}`);
         }
 
-        // Lấy JSON trả về từ API
         const result = await response.json();
+        setAudioFile(result.url);
 
-        // Gán giá trị từ JSON trả về
-        setAudioFile(result.url); // Gán giá trị "url" vào audioFile
-        setDuration(result.duration); // Gán giá trị "duration" vào duration
+        // Lấy độ dài của file MP3
+        const duration = await getAudioDuration(result.url);
+        setDuration(duration);
 
         console.log("Audio uploaded successfully:", result.url);
-        console.log("Duration:", result.duration);
+        console.log("Duration:", duration);
       } catch (error) {
         console.error("Error uploading file:", error);
+
         alert("Failed to upload audio. Please try again.");
       }
     } else {
       alert("Please upload a valid MP3 file.");
     }
   };
+
+  // Hàm lấy độ dài file MP3
+const getAudioDuration = async (audioUrl) => {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio(audioUrl);
+
+    audio.addEventListener("loadedmetadata", () => {
+      const duration = Math.floor(audio.duration); // Lấy phần nguyên của thời gian
+      resolve(duration); // Trả về độ dài (tính bằng giây, phần nguyên)
+    });
+
+    audio.addEventListener("error", (e) => {
+      reject("Failed to load audio file.");
+    });
+  });
+};
 
   const handleSubmitCreateTrack = async (event) => {
     event.preventDefault();
@@ -173,13 +192,13 @@ const UploadTrack = () => {
     console.log({
       artistName,
       verifiedArtist: true,
-      img : artistImage, // Link ảnh từ imgBB
+      img: artistImage, // Link ảnh từ imgBB
     });
 
     try {
       const response = await api.post("/artist", {
         artistName,
-        verifiedArtist: true, 
+        verifiedArtist: true,
         img: artistImage,
       });
       if (response && response.status === 200) {
@@ -379,7 +398,10 @@ const UploadTrack = () => {
       );
     } else if (currentForm === "addGenre") {
       return (
-        <form className="w-[90%] max-w-md bg-[#242424] p-6 rounded-lg flex flex-col gap-4" onSubmit={handleSubmitAddGenre}>
+        <form
+          className="w-[90%] max-w-md bg-[#242424] p-6 rounded-lg flex flex-col gap-4"
+          onSubmit={handleSubmitAddGenre}
+        >
           <div>
             <label className="block mb-2 font-semibold">Genre Name</label>
             <input
@@ -404,14 +426,12 @@ const UploadTrack = () => {
             )}
           </div>
 
-          
           <button
-              type="submit"
-              className="w-full p-2 bg-green-500 text-white rounded hover:bg-[#121212]"
-            >
-              Submit
-            </button>
-
+            type="submit"
+            className="w-full p-2 bg-green-500 text-white rounded hover:bg-[#121212]"
+          >
+            Submit
+          </button>
 
           <button
             type="button"
@@ -424,7 +444,10 @@ const UploadTrack = () => {
       );
     } else if (currentForm === "addArtist") {
       return (
-        <form className="w-[90%] max-w-md bg-[#242424] p-6 rounded-lg flex flex-col gap-4" onSubmit={handleSubmitAddArtist}>
+        <form
+          className="w-[90%] max-w-md bg-[#242424] p-6 rounded-lg flex flex-col gap-4"
+          onSubmit={handleSubmitAddArtist}
+        >
           <div>
             <label className="block mb-2 font-semibold">Artist Name</label>
             <input
@@ -450,11 +473,11 @@ const UploadTrack = () => {
           </div>
 
           <button
-              type="submit"
-              className="w-full p-2 bg-green-500 text-white rounded hover:bg-[#121212]"
-            >
-              Submit
-            </button>
+            type="submit"
+            className="w-full p-2 bg-green-500 text-white rounded hover:bg-[#121212]"
+          >
+            Submit
+          </button>
 
           <button
             type="button"

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import OAuthLogin from "./OAuthLogin";
+import api from "../config/axios"; // Import axios instance
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -36,25 +37,18 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("https://54.66.143.213:5000/api/Login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await api.post("/Login", { email, password }); // Sử dụng axios instance
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Login successful:", data);
+      if (response.status === 200) {
+        const data = response.data;
+        console.log("Login successful:", data.token);
         // Lưu token hoặc thông tin người dùng vào localStorage/sessionStorage
         localStorage.setItem("token", data.token);
         // Điều hướng đến trang Home
         navigate("/"); // Navigate to Home
       } else {
         // Hiển thị lỗi từ API
-        setErrors({ api: data.message || "Login failed. Please try again." });
+        setErrors({ api: response.data.message || "Login failed. Please try again." });
       }
     } catch (error) {
       console.error("Error during login:", error);
